@@ -1,6 +1,7 @@
 package guru.springframework.jdbc;
 
 
+import guru.springframework.jdbc.dao.AuthorDao;
 import guru.springframework.jdbc.repositories.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +14,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ActiveProfiles("local")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class MySQLIntegrationTest {
+class MySQLIntegrationTest {
 
     @Autowired
     BookRepository bookRepository;
 
+    @Autowired
+    AuthorDao authorDao;
+
     @Test
     void testMySQL() {
+        assertThat(authorDao).isNotNull();
         long countBefore = bookRepository.count();
-        assertThat(countBefore).isGreaterThan(0);
+        assertThat(countBefore).isPositive();
     }
 
 }

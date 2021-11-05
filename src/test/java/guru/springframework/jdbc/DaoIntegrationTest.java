@@ -1,10 +1,8 @@
 package guru.springframework.jdbc;
 
 import guru.springframework.jdbc.dao.AuthorDao;
-
 import guru.springframework.jdbc.dao.BookDao;
 import guru.springframework.jdbc.domain.Author;
-
 import guru.springframework.jdbc.domain.Book;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @ComponentScan(basePackages = {"guru.springframework.jdbc.dao"})
-public class DaoIntegrationTest {
+class DaoIntegrationTest {
 
     @Autowired
     AuthorDao authorDao;
@@ -40,11 +38,11 @@ public class DaoIntegrationTest {
         book.setPublisher("Self");
         book.setTitle("my book");
         Book saved = bookDao.saveNewBook(book);
-
-        bookDao.deleteBookById(saved.getId());
+        Long savedId = saved.getId();
+        bookDao.deleteBookById(savedId);
 
         assertThrows(EmptyResultDataAccessException.class, () -> {
-            bookDao.getById(saved.getId());
+            bookDao.getById(savedId);
         });
     }
 
@@ -99,11 +97,11 @@ public class DaoIntegrationTest {
         author.setLastName("t");
 
         Author saved = authorDao.saveNewAuthor(author);
-
-        authorDao.deleteAuthorById(saved.getId());
+        Long savedId = saved.getId();
+        authorDao.deleteAuthorById(savedId);
 
         assertThrows(EmptyResultDataAccessException.class, () -> {
-            authorDao.getById(saved.getId());
+            authorDao.getById(savedId);
         });
     }
 
@@ -143,9 +141,14 @@ public class DaoIntegrationTest {
 
     @Test
     void testGetAuthor() {
-
-        Author author = authorDao.getById(26l);
-
+        Author author = authorDao.getById(1L);
         assertThat(author.getId()).isNotNull();
+    }
+
+    @Test
+    void testGetWrongAuthor() {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            Author author = authorDao.getById(7L);
+        });
     }
 }
