@@ -13,6 +13,18 @@ public class Author {
     private String firstName;
     private String lastName;
 
+    public Author(Long id, String firstName, String lastName, List<Book> books) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.books = books;
+    }
+
+    public Author(){
+    }
+
+
+
     @Transient
     private List<Book> books;
 

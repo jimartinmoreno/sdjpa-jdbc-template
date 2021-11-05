@@ -1,8 +1,15 @@
 package guru.springframework.jdbc.dao;
 
+import guru.springframework.jdbc.domain.Author;
 import guru.springframework.jdbc.domain.Book;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.DataClassRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * Created by jt on 8/25/21.
@@ -17,12 +24,14 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public Book getById(Long id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM book where id = ?", getBookMapper(), id);
+        String sql = "SELECT * FROM book where id = ?";
+        return jdbcTemplate.queryForObject(sql, ((rs, i) -> new Book(rs.getLong(1), rs.getString(4), rs.getString(2), rs.getString(3), rs.getLong(5))), id);
     }
 
     @Override
     public Book findBookByTitle(String title) {
-        return jdbcTemplate.queryForObject("SELECT * FROM book where title = ?", getBookMapper(), title);
+        String sql = "SELECT * FROM book where title = ?";
+        return jdbcTemplate.queryForObject(sql, getBookMapper(), title);
     }
 
     @Override
@@ -48,7 +57,20 @@ public class BookDaoImpl implements BookDao {
         jdbcTemplate.update("DELETE from book where id = ?", id);
     }
 
-    private BookMapper getBookMapper(){
+    @Override
+    public List<Book> findAll() {
+        String sql = "select * from book";
+        System.out.println("sql: " + sql);
+
+        return jdbcTemplate.query(sql, DataClassRowMapper.newInstance(Book.class));
+        //return jdbcTemplate.queryForStream(sql, getBookMapper()).toList();
+        //return dbcTemplate.queryForStream(sql, DataClassRowMapper.newInstance(Author.class)).toList();
+        //return jdbcTemplate.queryForStream(sql, getRowMapper()).toList();
+        //return jdbcTemplate.queryForStream(sql, BeanPropertyRowMapper.newInstance(Book.class)).toList();
+
+    }
+
+    private RowMapper<Book> getBookMapper() {
         return new BookMapper();
     }
 }

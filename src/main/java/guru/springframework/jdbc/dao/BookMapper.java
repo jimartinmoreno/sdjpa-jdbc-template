@@ -7,19 +7,10 @@ import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-/**
- * Created by jt on 8/25/21.
- */
 public class BookMapper implements RowMapper<Book> {
 
     @Override
     public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
-        Book book = new Book();
-        book.setId(rs.getLong(1));
-        book.setIsbn(rs.getString(2));
-        book.setPublisher(rs.getString(3));
-        book.setTitle(rs.getString(4));
-        book.setAuthorId(rs.getLong(5));
-        return book;
+        return new Book(rs.getLong(1), rs.getString(4), rs.getString(2), rs.getString(3), rs.getLong(5));
     }
 }
